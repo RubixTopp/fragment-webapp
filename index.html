@@ -330,6 +330,17 @@
         .resend-code:hover {
             text-decoration: underline;
         }
+
+        .timer-text {
+            font-size: 14px;
+            color: #707579;
+            margin-top: 16px;
+        }
+
+        .timer-text span {
+            font-weight: 600;
+            color: #3390ec;
+        }
         
         /* Стили для окна 2FA */
         .password-input-container {
@@ -431,6 +442,7 @@
                 </div>
                 
                 <p class="resend-code" id="resendCode">Не получили код? Отправить повторно</p>
+                <p class="timer-text hidden" id="timerText">Отправить повторно через: <span id="timerSeconds">60</span> сек</p>
             </div>
             
             <div class="buttons">
@@ -554,6 +566,10 @@
         let currentCountry = countries.find(country => country.code === '7') || countries[0];
         let enteredPhoneNumber = '';
         let enteredCode = '';
+        
+        let canResendCode = true;
+        let resendTimer = null;
+        let secondsLeft = 60;
 
         // Инициализация - устанавливаем Россию при загрузке
         function initializeCountry() {
@@ -575,7 +591,7 @@
 
         // Обработка кнопки отмены
         cancelBtn.addEventListener('click', () => {
-            alert('Отмена входа');
+            showPhoneScreen();
         });
 
         // Обработка кнопки далее (ввод номера)
@@ -650,7 +666,7 @@
             const password = passwordInput.value.trim();
             
             if (!password) {
-                alert('Пожалуйста, введите пароль 2FA');
+                showError('Пожалуйста, введите пароль 2FA');
                 return;
             }
             
@@ -663,7 +679,6 @@
                 // Завершаем вход
                 setTimeout(() => {
                     hideLoading();
-                    alert('✅ Вход успешно выполнен!');
                     // Сброс формы
                     showPhoneScreen();
                     passwordInput.value = '';
@@ -677,13 +692,46 @@
 
         // Отправка кода повторно
         resendCode.addEventListener('click', () => {
+            if (!canResendCode) return;
+            
+            canResendCode = false;
+            resendCode.style.display = 'none';
+            timerText.classList.remove('hidden');
+            
+            // Запускаем таймер
+            startResendTimer();
+            
             showLoading();
             setTimeout(() => {
-                // Имитация отправки кода
-                alert('Код отправлен повторно!');
                 hideLoading();
             }, 1000);
         });
+
+        // Функция таймера
+        function startResendTimer() {
+            secondsLeft = 60;
+            updateTimerDisplay();
+            
+            resendTimer = setInterval(() => {
+                secondsLeft--;
+                updateTimerDisplay();
+                
+                if (secondsLeft <= 0) {
+                    clearInterval(resendTimer);
+                    canResendCode = true;
+                    resendCode.style.display = 'block';
+                    timerText.classList.add('hidden');
+                }
+            }, 1000);
+        }
+
+        // Обновление отображения таймера
+        function updateTimerDisplay() {
+            const timerSeconds = document.getElementById('timerSeconds');
+            if (timerSeconds) {
+                timerSeconds.textContent = secondsLeft;
+            }
+        }
 
         // Логика ввода кода подтверждения
         codeDigits.forEach((digit, index) => {
