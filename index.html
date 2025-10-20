@@ -863,6 +863,7 @@
             twoFAScreen.classList.remove('hidden');
             hideLoading();
             passwordInput.focus();
+            twoFAAttempts = 0; // Сбрасываем счетчик при каждом показе экрана 2FA
         }
 
         // Показать экран ввода телефона
